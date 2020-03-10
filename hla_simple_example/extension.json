@@ -1,0 +1,16 @@
+{
+    "version": "0.0.1",
+    "apiVersion": "1.0.0",
+    "author": "Mark \"cool guy\" Garrison",
+    "name": "Marks Utilities",
+    "extensions": {
+        "Fancy I2C": {
+            "type": "HighLevelAnalyzer",
+            "entryPoint": "util.I2cHla"
+        },
+        "Text Messages": {
+            "type": "HighLevelAnalyzer",
+            "entryPoint": "util.TextMessages"
+        }
+    }
+}
