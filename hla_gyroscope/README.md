@@ -19,16 +19,16 @@ To try this extension out for yourself, you will need:
 
 To try out the extension once you you have the necessary files, you will need to:
 
-  1. Open Logic 2 (2.2.6 or greater)
-  2. Add the extension
+ 1. Open Logic 2 (2.2.6 or greater)
+ 2. Add the extension
     1. Open the extensions panel by clicking on the extension icon on the right sidebar
     2. Click the + button in the upper right
     3. Click the "Select .json file" button and navigate to the `extension.json` file that you saved above
     4. That's it - `Gyro L3G4200D` should now show up in your list of extensions
-  3. Load the capture that you downloaded above
+ 3. Load the capture that you downloaded above
     1. Click the menu button in the bottom right and select "Open Capture"
     2. Navigate to the `.sal` file you downloaded above, and open it
-  4. Add the Gyro HLA that we just loaded as an extension
+ 4. Add the Gyro HLA that we just loaded as an extension
     1. Open the analyzers panel by clicking on the analyzer icon on the right sidebar
     2. Click on the + button in the upper right, then navigate to and click on "Gyro L3G4200D"
     3. In the popup, select the I2C analyzer as input to the HLA
