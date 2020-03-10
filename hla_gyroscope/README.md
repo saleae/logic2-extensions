@@ -2,7 +2,7 @@
 
 This example HLA (High Level Analyzer) decodes i2c traffic from the [L3G4200D motion sensor](https://www.sparkfun.com/products/retired/10612) ([datasheet](http://cdn.sparkfun.com/datasheets/Sensors/Gyros/3-Axis/CD00265057.pdf)), and can be used as a reference for your writing your own HLA.
 
-For documentation and information about High Level Analyzers in general, please go to https://gist.github.com/Marcus10110/f178b66c9b7929d17a9875283b5771da.
+For documentation and information about High Level Analyzers in general, please see [README.md](../README.md).
 
 ## Extension Files
 The example extension itself can be found in the `extension` directory. It includes the 2 required files to create an HLA:
