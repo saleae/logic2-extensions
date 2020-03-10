@@ -1,4 +1,4 @@
-# Example High Level Analyzer for Gyroscope
+# Example Gyroscope HLA
 
 This example HLA (High Level Analyzer) decodes i2c traffic from the [L3G4200D motion sensor](https://www.sparkfun.com/products/retired/10612) ([datasheet](http://cdn.sparkfun.com/datasheets/Sensors/Gyros/3-Axis/CD00265057.pdf)), and can be used as a reference for your writing your own HLA.
 
