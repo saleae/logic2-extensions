@@ -2,18 +2,17 @@
 
 ## High Level Protocol Analyzers
 
+Saleae High Level Analyzers (HLAs) allow you to write python code that processes a stream of protocol frames, and produces a new stream of protocol frames.
+
 ### Example Projects
 
   - [Gyroscope HLA](./hla_gyroscope)
   - [Simple HLA](./hla_simple_example)
 
-### Documentation
 
-*This requires the Saleae Logic software version 2.2.6 or newer.*
+*HLAs require the Saleae Logic software version 2.2.6 or newer.*
 
 *The High Level Analyzer API is likely to change dramatically over the next few months. Always check for updated samples and documentation at [discuss.saleae.com](https://discuss.saleae.com/).*
-
-Saleae High Level Analyzers (HLAs) allow you to write python code that processes a stream of protocol frames, and produces a new stream of protocol frames.
 
 HLAs require two files, an `extension.json` file, and a python source file.
 
