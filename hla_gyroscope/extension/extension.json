@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "apiVersion": "1.0.0",
+  "author": "Ryan Huffman",
+  "name": "Gyro L3G4200D",
+  "extensions": {
+    "Gyro L3G4200D": {
+      "type": "HighLevelAnalyzer",
+      "entryPoint": "Hla.Gyro"
+    }
+  }
+}
