@@ -26,6 +26,8 @@ Saleae High Level Analyzers (HLAs) allow you to write python code that processes
 
 ## Development Process
 
+![screen recording of HLA template creation](./assets/hla_walkthrough.gif)
+
 Starting a new HLA is easy! First, install and open the latest version of the Logic software. Then, open the new extensions sidebar panel.
 
 From there, click the "+" button in the upper right. This will open the "Create an Extension" dialog. Here you can either create a new extension from a template, or load an existing extension from disk.
