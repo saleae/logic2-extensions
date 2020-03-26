@@ -1,16 +1,16 @@
 # Logic 2 Examples
 
 
-## API changelog
-
-Logic 2.2.6
-
-- Very first release of extensions, starting with High Level Analyzers!
+## API Change Log
 
 Logic 2.2.9
 
 - Added python measurements as a new type of extension
 - Added settings support to HLAs.
+
+Logic 2.2.6
+
+- Very first release of extensions, starting with High Level Analyzers!
 
 ## High Level Protocol Analyzers
 
@@ -18,8 +18,8 @@ Saleae High Level Analyzers (HLAs) allow you to write python code that processes
 
 ### Example Projects
 
-  - [Gyroscope HLA](./hla_gyroscope)
-  - [Simple HLA](./hla_simple_example)
+- [Gyroscope HLA](./hla_gyroscope)
+- [Simple HLA](./hla_simple_example)
 
 
 *HLAs require the Saleae Logic software version 2.2.6 or newer. HLA settings were introduced in 2.2.9*
@@ -38,7 +38,7 @@ Then, add the correct analyzer for your data (Serial, I2C, and SPI are supported
 
 This will open the settings for your HLA. Right now there is only one, the input analyzer. There, you need to select the low-level analyzer you added earlier, Serial, I2C or SPI. Then press finish.
 
-The default HLA template will just copy the frames from the input analyzer to the output. Because it doesn't come with a format string (described below), the bubble text you will see on screen will probably look like this: '{type:"data", data:{value:10,...}}'. This conveniently shows you the data format of the input analyzer that you selected, which you will need to access in your HLA. The data format for your input analyzer is also documented below.
+The default HLA template will just copy the frames from the input analyzer to the output. Because it doesn't come with a format string (described below), the graph overlay text you will see on screen will probably look like this: '{type:"data", data:{value:10,...}}'. This conveniently shows you the data format of the input analyzer that you selected, which you will need to access in your HLA. The data format for your input analyzer is also documented below.
 
 Next, open the *.py file you just created in your [favorite text editor](https://code.visualstudio.com/). Use the documentation below to get started! To reload your HLA, you can simply right-click on the instance on the analyzers sidebar, and select "Reload Source Files". This will cause your python file to be re-loaded and re-run over the captured data.
 
