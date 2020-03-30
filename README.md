@@ -1,4 +1,4 @@
-# Logic 2 Examples
+# Logic 2 Extensions
 
 
 ## API Change Log
