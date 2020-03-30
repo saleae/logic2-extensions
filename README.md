@@ -1,5 +1,6 @@
 # Logic 2 Extensions
 
+The Logic 2.x software supports custom high level analyzers, digital measurements, and analog measurements, written in python.
 
 ## API Change Log
 
@@ -12,23 +13,15 @@ Logic 2.2.6
 
 - Very first release of extensions, starting with High Level Analyzers!
 
-## High Level Protocol Analyzers
+## Getting started with Extensions
 
-Saleae High Level Analyzers (HLAs) allow you to write python code that processes a stream of protocol frames, and produces a new stream of protocol frames.
-
-### Example Projects
-
-- [Gyroscope HLA](./hla_gyroscope)
-- [Simple HLA](./hla_simple_example)
-
-
-*HLAs require the Saleae Logic software version 2.2.6 or newer. HLA settings were introduced in 2.2.9*
-
-## Development Process
+### Creating a New Extension from Template
 
 ![screen recording of HLA template creation](./assets/hla_walkthrough.gif)
 
-Starting a new HLA is easy! First, install and open the latest version of the Logic software. Then, open the new extensions sidebar panel.
+Starting a new extension is easy! This section will walk though creating a "High Level Analyzer" from a template, but the process is identical for custom measurements.
+
+First, install and open the latest version of the Logic software. Then, open the new extensions sidebar panel.
 
 From there, click the "+" button in the upper right. This will open the "Create an Extension" dialog. Here you can either create a new extension from a template, or load an existing extension from disk.
 
@@ -46,15 +39,11 @@ Next, open the *.py file you just created in your [favorite text editor](https:/
 
 If an error occurs while running your python code, the error message and stack trace will be displayed in a notification.
 
-We're still working on every part of the HLA system, including the development experience. Keep an eye out for updates!
-
-## Extension File Layout
-
-*The High Level Analyzer API is likely to change dramatically over the next few months. Always check for updated samples and documentation at [discuss.saleae.com](https://discuss.saleae.com/).*
+### Extension File Layout
 
 HLAs require two files, an `extension.json` file, and a python source file.
 
-the `extension.json` file looks like so, and can include one or more HLAs.
+the `extension.json` file looks like so, and can include one or more extensions - high level analyzers or measurements.
 
 ```json
 {
@@ -70,14 +59,62 @@ the `extension.json` file looks like so, and can include one or more HLAs.
         "Text Messages": {
             "type": "HighLevelAnalyzer",
             "entryPoint": "util.TextMessages"
+        },
+        "voltageData": {
+        "type": "AnalogMeasurement",
+        "entryPoint": "voltage_statistics.VoltageStatisticsMeasurer",
+        "metrics": {
+          "voltageRms": {
+            "name": "Voltage RMS",
+            "notation": "V<sub>RMS</sub>",
+            "units": "V"
+          }
         }
+      }
     }
 }
 ```
 
-The "extensions" object should contain one key for each HLA class you would like to write. the "entryPoint" key contains the python file name, a dot, and the python class name, allowing you to write multiple HLAs in a single python file, or separate python files. (i.e. `"fileName.className"`)
+The "extensions" object should contain one key for each extension class you would like to write. the "entryPoint" key contains the python file name, a dot, and the python class name, allowing you to write multiple extensions in a single python file, or separate python files. (i.e. `"fileName.className"`)
 
-## Python API Documentation
+## Measurements
+
+### Using Measurements
+
+Measurements are a relatively new feature in the alpha software. The gif below demonstrates their use. You can also hold the shift key while dragging on a channel to add a measurement, without using the sidebar.
+
+![screen recording of using range measurements](./assets/use_measurement.gif)
+
+These measurements automatically run all installed measurements for the given channel type.
+
+
+### Example Projects
+
+The source code for the two measurements built into the application can be found in this repository:
+
+- [Voltage Statistics (Analog)](./voltageStats)
+- [Clock Statistics (Digital)](./clockStats)
+
+### Python API Documentation
+
+*TODO*
+
+## High Level Protocol Analyzers
+
+*The High Level Analyzer API is likely to change dramatically over the next few months. Always check for updated samples and documentation at [discuss.saleae.com](https://discuss.saleae.com/).*
+
+*We're still working on every part of the HLA system, including the development experience. Keep an eye out for updates!*
+
+Saleae High Level Analyzers (HLAs) allow you to write python code that processes a stream of protocol frames, and produces a new stream of protocol frames.
+
+### Example Projects
+
+- [Gyroscope HLA](./hla_gyroscope)
+- [Simple HLA](./hla_simple_example)
+
+*HLAs require the Saleae Logic software version 2.2.6 or newer. HLA settings were introduced in 2.2.9*
+
+### Python API Documentation
 
 To write a HLA, you need to provide a single python class which implements these methods:
 
@@ -168,7 +205,7 @@ def decode(self, data):
   }
 ```
 
-## Exposing Settings through the UI
+### Exposing Settings through the UI
 
 Logic 2.2.9 introduced user editable settings to the API.
 
@@ -270,7 +307,7 @@ STRING_SETTING_LABEL = 'First Setting Label'
 
 To access user edited settings in the `def decode(self, data)` method, first save them in class member variables.
 
-## HLA life Cycle
+### HLA life Cycle
 
 Your HLA class will be constructed the moment the user adds your HLA, even if no data has been captured yet.
 
@@ -288,11 +325,11 @@ Instances of your HLA class are NOT re-used between captures or tabs. Each captu
 
 The python file on disk is freshly read right before constructing the HLA class.
 
-## Input Frame Types
+### Input Frame Types
 
 At launch, we've included HLA support for our Serial, I2C, and SPI analyzers. All of the other analyzers we include with our application cannot be used with HLAs yet, but we will quickly add support.
 
-### Serial format
+#### Serial format
 
 ```py
 {
@@ -308,7 +345,7 @@ At launch, we've included HLA support for our Serial, I2C, and SPI analyzers. Al
 }
 ```
 
-### I2C format
+#### I2C format
 
 ```py
 # Start Condition
@@ -347,7 +384,7 @@ At launch, we've included HLA support for our Serial, I2C, and SPI analyzers. Al
 }
 ```
 
-### SPI Format
+#### SPI Format
 
 ```py
 {
@@ -361,6 +398,6 @@ At launch, we've included HLA support for our Serial, I2C, and SPI analyzers. Al
 }
 ```
 
-## Feedback Welcome!
+## Feedback Welcome
 
-The HLA API is far from complete. We expect to dramatically expand this in the near future, as well as add support for custom measurements for analog and digital channels. Feedback is welcome. Please direct it to [discuss.saleae.com](https://discuss.saleae.com/).
+The HLA & measurements API is far from complete. We expect to dramatically expand this in the near future. Feedback is welcome. Please direct it to [discuss.saleae.com](https://discuss.saleae.com/).

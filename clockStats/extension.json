@@ -1,0 +1,43 @@
+{
+  "version": "0.0.1",
+  "apiVersion": "1.0.0",
+  "author": "Saleae",
+  "description": "Builtin clock stats - Average frequency, edge count, etc",
+  "name": "Clock Stats",
+  "extensions": {
+    "clockStats": {
+      "type": "DigitalMeasurement",
+      "entryPoint": "clock_stats.ClockStatsMeasurer",
+      "metrics": {
+        "edgesFalling": {
+          "name": "No. Falling Edges",
+          "notation": "N<sub>falling</sub>"
+        },
+        "edgesRising": {
+          "name": "No. Rising Edges",
+          "notation": "N<sub>rising</sub>"
+        },
+        "frequencyMin": {
+          "name": "Minimum Frequency",
+          "notation": "<i>f</i><sub>min</sub>",
+          "units": "Hz"
+        },
+        "frequencyMax": {
+          "name": "Maximum Frequency",
+          "notation": "<i>f</i><sub>max</sub>",
+          "units": "Hz"
+        },
+        "frequencyAvg": {
+          "name": "Average Frequency",
+          "notation": "<i>f</i><sub>mean</sub>",
+          "units": "Hz"
+        },
+        "periodStdDev": {
+          "name": "Period STD",
+          "notation": "T<sub>std</sub>",
+          "units": "s"
+        }
+      }
+    }
+  }
+}
