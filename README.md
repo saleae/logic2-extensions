@@ -87,7 +87,6 @@ Measurements are a relatively new feature in the alpha software. The gif below d
 
 These measurements automatically run all installed measurements for the given channel type.
 
-
 ### Example Projects
 
 The source code for the two measurements built into the application can be found in this repository:
@@ -95,9 +94,161 @@ The source code for the two measurements built into the application can be found
 - [Voltage Statistics (Analog)](./voltageStats)
 - [Clock Statistics (Digital)](./clockStats)
 
+*Measurements require the Saleae Logic software version 2.2.9 or newer.*
+
 ### Python API Documentation
 
-*TODO*
+Digital measurements should be implemented with a class that looks like this:
+
+```py
+from saleae.range_measurements import DigitalMeasurer
+
+class MyDigitalMeasurement(DigitalMeasurer):
+
+  def __init__(self, requested_measurements):
+    super().__init__(requested_measurements)
+
+  def process_data(self, data):
+    for t, bitstate in data:
+      pass
+  
+  def measure(self):
+    return {}
+```
+
+Analog measurements are similar:
+
+```py
+from saleae.range_measurements import AnalogMeasurer
+
+class VoltageStatisticsMeasurer(AnalogMeasurer):
+
+  def __init__(self, requested_measurements):
+    super().__init__(requested_measurements)
+
+  def process_data(self, data):
+    pass
+  
+  def measure(self):
+    return {}
+```
+
+#### Measurement development process
+
+Measurements (both analog and digital) need to compute a set of display values for a specific range of time, over a single channel.
+
+Measurement extensions can produce a list of labeled numbers for display in the UI. These are called "metrics".
+
+Each metric needs to be declared in the extension.json file, like so:
+
+```json
+{
+    "version": "0.0.1",
+    "apiVersion": "1.0.0",
+    "author": "Mark \"cool guy\" Garrison",
+    "name": "Marks Utilities",
+    "extensions": {
+        "MyAnalogMeasurement": {
+        "type": "AnalogMeasurement",
+        "entryPoint": "my_analog_measurement.ExampleMeasurement",
+        "metrics": {
+          "averageVoltage": {
+            "name": "Average Voltage",
+            "notation": "V<sub>mean</sub>",
+            "units": "V"
+          },
+          "maxVoltage": {
+            "name": "Maximum Voltage",
+            "notation": "V<sub>max</sub>",
+            "units": "V"
+          }
+        }
+      }
+    }
+}
+```
+
+Each metric needs a single entry in the "metrics" object. That entry needs to contain `name`, `notation`, and `units`.
+
+The `notation` entry can be an html string, however only limited tags are supported: ['b'](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/b), ['i'](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/i), ['em'](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/em), ['strong'](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/strong), ['sub'](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/sub).
+
+The `units` string should not include a metric prefix, as the metric prefix will automatically be calculated. For example, if the unit is frequency, provide "Hz" as a string, and ensure your measurement class always returns a value in Hertz. The Logic software will automatically adjust large or small numbers to display with the correct metric prefix, for example 1000 Hz will be displayed as "1 kHz".
+
+The key of each metric will be passed into your python code, so be sure to keep note of them. In the example json above, those keys are "averageVoltage" and "maxVoltage".
+
+In python, your class will be constructed when the user adds or edits a measurement. This instance of your class will be used for a single computation.
+
+Note - your class can either process analog data or digital data, but not both. A class may handle as many metrics as you want though. If you want to implement both digital and analog measurements, you will need at a minimum two classes.
+
+The constructor will be called with an array of requested measurements, which are taken from the extension.json file. In this example, that will be `["averageVoltage", "maxVoltage"]`.
+
+Your constructor needs to pass this array to the base class:
+
+```py
+def __init__(self, requested_measurements):
+    super().__init__(requested_measurements)
+```
+
+Immediately after construction, the method `def process_data(self, data):` will be called one or more times.
+
+The Saleae Logic software stores collected data in chunks. To keep python processing performant, the Logic software passes these blocks, or sections of these blocks, one at a time to your measurement. If the requested measurement range does not line up with the internal block storage, the objects passed to python will already be adjusted to the measurement range, so no work needs to be done to handle this condition.
+
+This makes it impossible to know exactly how much data will be needed for the given measurement range the first time `process_data` is called. Be sure to update the internal state of your class in such a way that this isn't a problem. For example, when computing the average analog value over a range, it would be best to hold the sum of all values passed to `process_data` and the total count of samples in data members, and only compute the average in the `measure` function.
+
+`def process_data(self, data):`. This function takes a parameter `data` which differs between analog and digital measurements.
+
+For analog measurements, `data` is an instance of the Saleae class `AnalogData`, which is an iterable class with the properties `sample_count` and `samples`.
+`sample_count` is a number, and is the number of analog samples in the data instance. Note - this might not be the total number of analog samples passed to your measurement, since `process_data` may be called more than once if the user selected range spans multiple chunks.
+
+`samples` is a [numpy](https://numpy.org/) [ndarray](https://docs.scipy.org/doc/numpy/reference/arrays.ndarray.html). For information handling this type, please refer to the numpy documentation.
+
+The `process_data` function should not return a value. Instead, it should update the internal state of your class, such that the `measure` function can produce your measurement's results.
+
+For digital measurement classes, the `data` parameter is an instance of the iterable Saleae class `DigitalData`. Each iteration returns a pair of values - the current time relative to the start of the capture, as a floating point number of seconds, and the current bit state as a boolean. (true = signal high).
+
+The object is essentially a list with the timestamp of each transition inside of the user selected region of digital data.
+
+For example, to compute the total number of transitions over the user selected range, this could be used:
+
+```py
+def __init__(self, requested_measurements):
+  super().__init__(requested_measurements)
+  self.first_transition_time = None
+  self.edge_count = 0
+
+def process_data(self, data):
+    for t, bitstate in data:
+        if self.first_transition_time is None:
+            self.first_transition_time = t
+        else
+          # note: the first entry does not indicate a transition, it's simply the bitstate and time at the beginning of the user selected range.
+          self.edge_count += 1
+
+```
+
+Currently, the `DigitalData` collection will first include the starting time and bit state, and then every transition that exists in the user selected range, if any. However, it does not yet provide any indication of where the user selected range stops. This is something we're keeping in mind for improvement.
+
+`def measure(self):` will be called on your class once all data has been passed to `process_data`. `measure` will only be called once.
+
+`measure` should return a dictionary with one key for every `requested_measurements` entry that was passed into your class's constructor.
+
+For example, given the original two metrics "averageVoltage" and "maxVoltage", our code could look like:
+
+```py
+def __init__(self, requested_measurements):
+    super().__init__(requested_measurements)
+    self.requested_measurements = requested_measurements
+
+def measure(self):
+  values = {}
+  if "averageVoltage" in self.requested_measurements:
+    values["averageVoltage"] = 1.0
+  if "maxVoltage" in self.requested_measurements:
+    values["maxVoltage"] = 42.0
+  return values
+```
+
+Note - in the future, we may allow the user to select which metrics to compute. To avoid unnecessary processing, it's recommended to check the `requested_measurements` provided by the constructor before computing or returning those values. However, returning measurements that were not requested is allowed, the results will just be ignored.
 
 ## High Level Protocol Analyzers
 
