@@ -204,9 +204,11 @@ For analog measurements, `data` is an instance of the Saleae class `AnalogData`,
 
 The `process_data` function should not return a value. Instead, it should update the internal state of your class, such that the `measure` function can produce your measurement's results.
 
-For digital measurement classes, the `data` parameter is an instance of the iterable Saleae class `DigitalData`. Each iteration returns a pair of values - the current time relative to the start of the capture, as a floating point number of seconds, and the current bit state as a boolean. (true = signal high).
+For digital measurement classes, the `data` parameter is an instance of the iterable Saleae class `DigitalData`. Each iteration returns a pair of values - the current time, as a `GraphTime` class instance, and the current bit state as a boolean. (true = signal high).
 
 The object is essentially a list with the timestamp of each transition inside of the user selected region of digital data.
+
+The `GraphTime` has one feature. one GraphTime can be subtracted from another to compute the difference in seconds, as a number. This allows your code to compute the time in between transitions, or the time duration between the beginning of the measurement and any transition inside of the measurement range, but it does not expose absolute timestamps.
 
 For example, to compute the total number of transitions over the user selected range, this could be used:
 
