@@ -10,7 +10,7 @@
         },
         "Text Messages": {
             "type": "HighLevelAnalyzer",
-            "entryPoint": "util.TextMessages"
+            "entryPoint": "text_messages.TextMessages"
         }
     }
 }
