@@ -5,6 +5,7 @@
 
 # Settings constants.
 from saleae.analyzers import HighLevelAnalyzer, AnalyzerFrame, StringSetting, NumberSetting, ChoicesSetting
+from saleae.data import GraphTimeDelta
 
 MESSAGE_PREFIX_SETTING = 'Message Prefix (optional)'
 PACKET_TIMEOUT_SETTING = 'Packet Timeout [s]'
@@ -19,14 +20,14 @@ DELIMITER_CHOICES = {
 }
 
 
-class TextMessages():
+class TextMessages(HighLevelAnalyzer):
 
     temp_frame = None
     delimiter = '\n'
 
     # Settings:
     prefix = StringSetting(label='Message Prefix (optional)')
-    packet_timeout = NumberSetting(label='Packet Timeout [s]')
+    packet_timeout = NumberSetting(label='Packet Timeout [s]', min=1E-6, max=1E4)
     delimiter_setting = ChoicesSetting(label='Packet Delimiter', choices=DELIMITER_CHOICES.keys())
 
     # Base output formatting options:
@@ -73,7 +74,8 @@ class TextMessages():
         # All protocols - use the delimiter specified in the settings.
         delimiters = [self.delimiter]  # [ "\0", "\n", "\r", " " ]
         # All protocols - delimit on a delay specified in the settings
-        maximum_delay = self.packet_timeout or 0.5E-3  # consider frames further apart than this separate messages
+        # consider frames further apart than this separate messages
+        maximum_delay = GraphTimeDelta(second=self.packet_timeout or 0.5E-3)
         # I2C - delimit on address byte
         # SPI - delimit on Enable toggle. TODO: add support for the SPI analyzer to send Enable/disable frames, or at least a Packet ID to the low level analyzer.
 
@@ -87,7 +89,7 @@ class TextMessages():
 
         # handle serial data
         if frame.type == "data" and "value" in frame.data.keys():
-            value = frame.data["value"]
+            value = frame.data["value"][0]
             char = chr(value)
 
         # handle I2C address
