@@ -490,7 +490,7 @@ At launch, we've included HLA support for our Serial, I2C, and SPI analyzers. Al
   "start_time": 0.0052,
   "end_time": 0.0076,
   "data": {
-    "value": 42,
+    "value": b'\x42',
     "parity_error": False,
     "framing_error": False,
     "address": False, # only used in Serial MP/MDB mode.
