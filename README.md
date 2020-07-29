@@ -228,7 +228,7 @@ def process_data(self, data):
 
 ```
 
-Currently, the `DigitalData` collection will first include the starting time and bit state, and then every transition that exists in the user selected range, if any. However, it does not yet provide any indication of where the user selected range stops. This is something we're keeping in mind for improvement.
+Currently, the `DigitalData` collection will include every transition that exists in the user selected range, if any. However, it does not yet provide any indication of where the user selected range starts or stops. This is something we're keeping in mind for improvement.
 
 `def measure(self):` will be called on your class once all data has been passed to `process_data`. `measure` will only be called once.
 
