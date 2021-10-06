@@ -545,7 +545,7 @@ At launch, we've included HLA support for our Serial, I2C, and SPI analyzers. Al
   "start_time": 0.0052,
   "end_time": 0.0076,
   "data": {
-    "msio": 42,
+    "miso": 42,
     "mosi": 42
   }
 }
